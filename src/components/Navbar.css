@@ -1,0 +1,36 @@
+
+.navbar-header {
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 2rem; 
+  box-sizing: border-box; 
+  position: sticky; /* La magia para que se quede fija */
+  top: 0; /* Pegada a la parte superior */
+  z-index: 100; /* Asegura que esté por encima de otro contenido */
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto; /* Centra el contenedor */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+}
+
+.navbar-brand a,
+.navbar-logout a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navbar-brand a:hover,
+.navbar-logout a:hover {
+  background-color: #f0f0f0;
+}

@@ -1,0 +1,63 @@
+
+.home-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem; 
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 2rem;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; 
+  margin-top: 2rem;
+}
+
+.note-row {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; 
+}
+
+.note-name {
+  font-weight: 600;
+  flex-shrink: 0; 
+}
+
+.note-description {
+  flex-grow: 1; 
+  margin: 0;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+.note-duration {
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+}
+
+.note-row .audio-player {
+  margin-top: 0;
+}
