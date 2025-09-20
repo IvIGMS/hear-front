@@ -10,6 +10,32 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem; 
+  flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+}
+
+.home-header h1 {
+  flex-grow: 1;
+}
+
+.search-controls {
+  display: flex;
+  gap: 1rem;
+  margin: 0 2rem; /* Espacio entre el título y el selector de página */
+}
+
+.search-input {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 220px; /* Ancho fijo para los inputs */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .loading-message,
@@ -56,6 +82,22 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; 
+}
+
+.note-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0; /* Para que no se encoja el contenedor de tags */
+}
+
+.tag-pill {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 0.25rem 0.6rem;
+  border-radius: 1rem; /* Para que sea bien redondeado */
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .note-duration {
