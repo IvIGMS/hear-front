@@ -93,6 +93,15 @@ const Home = () => {
     setCurrentPage(1);
   };
 
+  const formatDisplayName = (name, maxLength = 20) => {
+    // Eliminar el hash para mostrarlo
+    const cleanName = name.split('_')[0];
+    if (cleanName.length <= maxLength) {
+      return cleanName;
+    }
+    return `${cleanName.substring(0, maxLength)}...`;
+  };
+
   return (
     <div className="home-container">
       <div className="home-header">
@@ -133,7 +142,12 @@ const Home = () => {
               return (
                 <div key={note.id} className="note-row">
                   <AudioPlayer noteId={note.id} />
-                  <span className="note-name">{note.nombre}</span>
+                  <div className="tooltip-container">
+                    <span className="note-name">
+                      {formatDisplayName(note.nombre)}
+                    </span>
+                    <span className="tooltip-text">{note.nombre}</span>
+                  </div>
                   <span 
                     className="note-space-name"
                     style={{ borderColor: spaceColor }}
