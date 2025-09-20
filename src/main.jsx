@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext';
+import { ColorProvider } from './context/ColorContext';
 import './index.css'
 
 import RootLayout from './layouts/RootLayout.jsx'
@@ -33,7 +34,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ColorProvider>
+        <RouterProvider router={router} />
+      </ColorProvider>
     </AuthProvider>
   </StrictMode>,
 )

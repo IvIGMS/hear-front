@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useColors } from '../context/ColorContext'; // Importar el hook de colores
 import AudioPlayer from '../components/AudioPlayer';
 import Pagination from '../components/Pagination';
 import PageSizeSelector from '../components/PageSizeSelector';
@@ -12,6 +13,8 @@ const Home = () => {
   const [pageSize, setPageSize] = useState(5);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { colorMap } = useColors(); // Usar el contexto de colores
 
   // Estados para los campos de búsqueda
   const [voiceNoteNameQueryParam, setVoiceNoteNameQueryParam] = useState('');
@@ -124,20 +127,29 @@ const Home = () => {
       ) : (
         <>
           <div className="notes-list">
-            {notes.map(note => (
-              <div key={note.id} className="note-row">
-                <AudioPlayer noteId={note.id} />
-                <span className="note-name">{note.nombre}</span>
-                <span className="note-space-name">{note.spaceName}</span>
-                <p className="note-description">{note.description}</p>
-                <div className="note-tags">
-                  {note.tags && note.tags.map((tag, index) => (
-                    <span key={index} className="tag-pill">{tag}</span>
-                  ))}
+            {notes.map(note => {
+              const spaceColor = colorMap[note.codeSpaceColor] || '#ccc'; // Color por defecto
+
+              return (
+                <div key={note.id} className="note-row">
+                  <AudioPlayer noteId={note.id} />
+                  <span className="note-name">{note.nombre}</span>
+                  <span 
+                    className="note-space-name"
+                    style={{ borderColor: spaceColor }}
+                  >
+                    {note.spaceName}
+                  </span>
+                  <p className="note-description">{note.description}</p>
+                  <div className="note-tags">
+                    {note.tags && note.tags.map((tag, index) => (
+                      <span key={index} className="tag-pill">{tag}</span>
+                    ))}
+                  </div>
+                  <span className="note-duration">{note.duration}s</span>
                 </div>
-                <span className="note-duration">{note.duration}s</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {pagination && pagination.totalPages > 1 && (

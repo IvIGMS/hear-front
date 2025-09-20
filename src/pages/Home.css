@@ -71,8 +71,13 @@
 
 .note-space-name {
   font-size: 0.85rem;
-  color: #888;
   margin-left: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 0.5rem; /* Menos redondeado */
+  font-weight: 600;
+  color: #888; /* Color de texto por defecto */
 }
 
 .note-description {
