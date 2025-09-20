@@ -47,8 +47,9 @@
 }
 
 .notes-list {
-  display: flex;
-  flex-direction: column;
+  display: grid; /* Contenedor principal de la Grid */
+  /* player | name | duration | space | description | spacer | tags */
+  grid-template-columns: auto minmax(150px, auto) auto auto 1fr 50px auto;
   gap: 0.75rem; 
   margin-top: 2rem;
 }
@@ -59,11 +60,15 @@
   border-radius: 8px;
   padding: 1rem 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  display: grid; /* Cambiado a Grid */
-  /* player | name | duration | space | description | spacer | tags */
-  grid-template-columns: auto minmax(120px, auto) auto auto 1fr 50px auto;
+  display: grid;
+  grid-column: 1 / -1; /* Ocupa todas las columnas del padre */
+  grid-template-columns: subgrid; /* Hereda las columnas del padre */
   align-items: center;
   gap: 1.5rem; 
+}
+
+.note-row > * {
+  text-align: center; /* Centra el contenido de texto de todas las celdas */
 }
 
 .note-name {
@@ -114,6 +119,7 @@
   font-weight: 600;
   color: #888; /* Color de texto por defecto */
   white-space: nowrap;
+  justify-self: center; /* Asegura que la píldora se centre */
 }
 
 .note-description {
@@ -122,11 +128,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; 
+  text-align: left; /* La descripción la dejamos a la izquierda */
 }
 
 .note-tags {
   display: flex;
   gap: 0.5rem;
+  justify-self: end; /* Alinea el contenedor de tags a la derecha */
 }
 
 .tag-pill {
