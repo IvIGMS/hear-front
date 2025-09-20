@@ -59,14 +59,18 @@
   border-radius: 8px;
   padding: 1rem 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  display: flex;
+  display: grid; /* Cambiado a Grid */
+  /* player | name | duration | space | description | spacer | tags */
+  grid-template-columns: auto minmax(120px, auto) auto auto 1fr 50px auto;
   align-items: center;
   gap: 1.5rem; 
 }
 
 .note-name {
   font-weight: 600;
-  flex-shrink: 0; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Contenedor para el tooltip */
@@ -103,17 +107,16 @@
 
 .note-space-name {
   font-size: 0.85rem;
-  margin-left: 0.5rem;
   padding: 0.25rem 0.6rem;
   border-width: 2px;
   border-style: solid;
   border-radius: 0.5rem; /* Menos redondeado */
   font-weight: 600;
   color: #888; /* Color de texto por defecto */
+  white-space: nowrap;
 }
 
 .note-description {
-  flex-grow: 1; 
   margin: 0;
   color: #666;
   white-space: nowrap;
@@ -124,7 +127,6 @@
 .note-tags {
   display: flex;
   gap: 0.5rem;
-  flex-shrink: 0; /* Para que no se encoja el contenedor de tags */
 }
 
 .tag-pill {

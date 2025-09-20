@@ -148,6 +148,7 @@ const Home = () => {
                     </span>
                     <span className="tooltip-text">{note.nombre}</span>
                   </div>
+                  <span className="note-duration">{note.duration}s</span>
                   <span 
                     className="note-space-name"
                     style={{ borderColor: spaceColor }}
@@ -155,12 +156,12 @@ const Home = () => {
                     {note.spaceName}
                   </span>
                   <p className="note-description">{note.description}</p>
+                  <div className="grid-spacer"></div>
                   <div className="note-tags">
                     {note.tags && note.tags.map((tag, index) => (
                       <span key={index} className="tag-pill">{tag}</span>
                     ))}
                   </div>
-                  <span className="note-duration">{note.duration}s</span>
                 </div>
               );
             })}
