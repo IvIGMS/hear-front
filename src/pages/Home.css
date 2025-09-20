@@ -43,6 +43,12 @@
   flex-shrink: 0; 
 }
 
+.note-space-name {
+  font-size: 0.85rem;
+  color: #888;
+  margin-left: 0.5rem;
+}
+
 .note-description {
   flex-grow: 1; 
   margin: 0;
