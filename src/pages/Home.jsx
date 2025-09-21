@@ -142,19 +142,21 @@ const Home = () => {
               return (
                 <div key={note.id} className="note-row">
                   <AudioPlayer noteId={note.id} />
-                  <div className="tooltip-container">
-                    <span className="note-name">
-                      {formatDisplayName(note.nombre)}
+                  <div className="note-identity">
+                    <div className="tooltip-container">
+                      <span className="note-name">
+                        {formatDisplayName(note.nombre)}
+                      </span>
+                      <span className="tooltip-text">{note.nombre}</span>
+                    </div>
+                    <span 
+                      className="note-space-name"
+                      style={{ borderColor: spaceColor }}
+                    >
+                      {note.spaceName}
                     </span>
-                    <span className="tooltip-text">{note.nombre}</span>
                   </div>
                   <span className="note-duration">{note.duration}s</span>
-                  <span 
-                    className="note-space-name"
-                    style={{ borderColor: spaceColor }}
-                  >
-                    {note.spaceName}
-                  </span>
                   <p className="note-description">{note.description}</p>
                   <div className="grid-spacer"></div>
                   <div className="note-tags">

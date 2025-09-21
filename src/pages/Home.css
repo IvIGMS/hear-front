@@ -67,8 +67,215 @@
   gap: 1.5rem; 
 }
 
+
+.home-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem; 
+  flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+}
+
+.home-header h1 {
+  flex-grow: 1;
+}
+
+.search-controls {
+  display: flex;
+  gap: 1rem;
+  margin: 0 2rem; /* Espacio entre el título y el selector de página */
+}
+
+.search-input {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 220px; /* Ancho fijo para los inputs */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 2rem;
+}
+
+.notes-list {
+  display: grid; /* Contenedor principal de la Grid */
+  /* player | name | duration | space | description | spacer | tags */
+  grid-template-columns: auto minmax(150px, auto) auto 1fr 50px auto;
+  gap: 0.75rem; 
+  margin-top: 2rem;
+}
+
+.note-row {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: grid;
+  grid-column: 1 / -1; /* Ocupa todas las columnas del padre */
+  grid-template-columns: subgrid; /* Hereda las columnas del padre */
+  align-items: center;
+  gap: 1.5rem; 
+}
+
 .note-row > * {
   text-align: center; /* Centra el contenido de texto de todas las celdas */
+}
+
+.note-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Contenedor para el tooltip */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* El texto del tooltip */
+.tooltip-text {
+  visibility: hidden;
+  width: auto; /* Ancho automático según el contenido */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Posición encima del elemento */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap; /* Para que no se parta en varias líneas */
+}
+
+/* Muestra el tooltip al pasar el ratón */
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.note-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.note-space-name {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.6rem;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 0.5rem; /* Menos redondeado */
+  font-weight: 600;
+  color: #888; /* Color de texto por defecto */
+  white-space: nowrap;
+  justify-self: center; /* Asegura que la píldora se centre */
+}
+
+.note-description {
+  margin: 0;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+  text-align: left; /* La descripción la dejamos a la izquierda */
+}
+
+.note-tags {
+  display: flex;
+  gap: 0.5rem;
+  justify-self: end; /* Alinea el contenedor de tags a la derecha */
+}
+
+.tag-pill {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 0.25rem 0.6rem;
+  border-radius: 1rem; /* Para que sea bien redondeado */
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.note-duration {
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+}
+
+.note-row .audio-player {
+  margin-top: 0;
+}
+
+/* --- Responsive para Móvil --- */
+@media (max-width: 768px) {
+  .home-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-controls {
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .notes-list {
+    display: flex; /* Cambiamos a flex para móvil */
+    flex-direction: column;
+  }
+
+  .note-row {
+    display: flex; /* Cambiamos a flex para móvil */
+    flex-direction: row;
+    justify-content: space-between;
+    grid-column: auto; /* Reseteamos propiedades de grid */
+    grid-template-columns: none;
+  }
+
+  .note-description,
+  .grid-spacer {
+    display: none; /* Ocultamos elementos */
+  }
+
+  .note-tags {
+    display: none !important; /* Forzamos la ocultación de los tags */
+  }
+
+  .note-identity {
+    align-items: flex-start; /* Alineamos a la izquierda en móvil */
+    flex-grow: 1; /* Ocupa el espacio disponible */
+    margin: 0 1rem;
+  }
 }
 
 .note-name {
