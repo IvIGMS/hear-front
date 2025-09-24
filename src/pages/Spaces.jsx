@@ -7,6 +7,8 @@ const Spaces = () => {
   const [spaces, setSpaces] = useState({ admin: [], member: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [adminCollapsed, setAdminCollapsed] = useState(false);
+  const [memberCollapsed, setMemberCollapsed] = useState(false);
 
   useEffect(() => {
     const fetchSpaces = async () => {
@@ -49,8 +51,19 @@ const Spaces = () => {
       
       {spaces.admin.length > 0 && (
         <div className="spaces-section">
-          <h2 className="admin-title">Admin Spaces</h2>
-          <div className="spaces-grid">
+          <div className="section-header">
+            <h2 className="admin-title">Admin Spaces</h2>
+            <button 
+              className={`collapse-btn ${adminCollapsed ? 'collapsed' : ''}`}
+              onClick={() => setAdminCollapsed(!adminCollapsed)}
+              aria-label={adminCollapsed ? 'Expandir Admin Spaces' : 'Colapsar Admin Spaces'}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 10.5l-4-4h8l-4 4z"/>
+              </svg>
+            </button>
+          </div>
+          <div className={`spaces-grid ${adminCollapsed ? 'collapsed' : ''}`}>
             {spaces.admin.map(space => (
               <div key={space.id} className="space-card admin-space">
                 <div className="space-header">
@@ -67,8 +80,19 @@ const Spaces = () => {
 
       {spaces.member.length > 0 && (
         <div className="spaces-section">
-          <h2 className="member-title">Member Spaces</h2>
-          <div className="spaces-grid">
+          <div className="section-header">
+            <h2 className="member-title">Member Spaces</h2>
+            <button 
+              className={`collapse-btn ${memberCollapsed ? 'collapsed' : ''}`}
+              onClick={() => setMemberCollapsed(!memberCollapsed)}
+              aria-label={memberCollapsed ? 'Expandir Member Spaces' : 'Colapsar Member Spaces'}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 10.5l-4-4h8l-4 4z"/>
+              </svg>
+            </button>
+          </div>
+          <div className={`spaces-grid ${memberCollapsed ? 'collapsed' : ''}`}>
             {spaces.member.map(space => (
               <div key={space.id} className="space-card member-space">
                 <div className="space-header">
