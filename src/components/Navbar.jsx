@@ -17,6 +17,7 @@ const Navbar = () => {
       <nav className="navbar-container">
         <div className="navbar-brand">
           <a href="/">Inicio</a>
+          {isAuthenticated && <a href="/spaces">Spaces</a>}
         </div>
         <div className="navbar-logout">
           {isAuthenticated ? (

@@ -9,6 +9,7 @@ import RootLayout from './layouts/RootLayout.jsx'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
+import Spaces from './pages/Spaces.jsx'
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: 'spaces',
+        element: <Spaces />,
       },
     ],
   },

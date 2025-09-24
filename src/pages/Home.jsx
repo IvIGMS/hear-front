@@ -156,13 +156,14 @@ const Home = () => {
                       {note.spaceName}
                     </span>
                   </div>
-                  <span className="note-duration">{note.duration}s</span>
-                  <p className="note-description">{note.description}</p>
-                  <div className="grid-spacer"></div>
-                  <div className="note-tags">
-                    {note.tags && note.tags.map((tag, index) => (
-                      <span key={index} className="tag-pill">{tag}</span>
-                    ))}
+                  <div className="note-info">
+                    <span className="note-duration">{note.duration}s</span>
+                    <p className="note-description">{note.description}</p>
+                    <div className="note-tags">
+                      {note.tags && note.tags.map((tag, index) => (
+                        <span key={index} className="tag-pill">{tag}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );

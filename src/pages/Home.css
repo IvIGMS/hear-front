@@ -1,365 +1,340 @@
-
+/* Contenedor principal - patrón consistente */
 .home-container {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 0 2rem;
 }
 
+/* Header principal */
 .home-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem; 
-  flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .home-header h1 {
   flex-grow: 1;
+  margin: 0;
+  color: #333;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
+/* Controles de búsqueda */
 .search-controls {
   display: flex;
   gap: 1rem;
-  margin: 0 2rem; /* Espacio entre el título y el selector de página */
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .search-input {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 220px; /* Ancho fijo para los inputs */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 220px;
   transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fff;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+.search-input::placeholder {
+  color: #999;
+}
+
+/* Estados de loading y error */
 .loading-message,
 .error-message {
   text-align: center;
   font-size: 1.2rem;
   color: #666;
   padding: 2rem;
-}
-
-.notes-list {
-  display: grid; /* Contenedor principal de la Grid */
-  /* player | name | duration | space | description | spacer | tags */
-  grid-template-columns: auto minmax(150px, auto) auto auto 1fr 50px auto;
-  gap: 0.75rem; 
-  margin-top: 2rem;
-}
-
-.note-row {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
   border-radius: 8px;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  display: grid;
-  grid-column: 1 / -1; /* Ocupa todas las columnas del padre */
-  grid-template-columns: subgrid; /* Hereda las columnas del padre */
-  align-items: center;
-  gap: 1.5rem; 
+  margin: 1rem 0;
 }
 
-
-.home-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 2rem;
-}
-
-.home-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem; 
-  flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
-}
-
-.home-header h1 {
-  flex-grow: 1;
-}
-
-.search-controls {
-  display: flex;
-  gap: 1rem;
-  margin: 0 2rem; /* Espacio entre el título y el selector de página */
-}
-
-.search-input {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 220px; /* Ancho fijo para los inputs */
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.loading-message,
 .error-message {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #666;
-  padding: 2rem;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
+/* Lista de notas - nueva estructura con cards */
 .notes-list {
-  display: grid; /* Contenedor principal de la Grid */
-  /* player | name | duration | space | description | spacer | tags */
-  grid-template-columns: auto minmax(150px, auto) auto 1fr 50px auto;
-  gap: 0.75rem; 
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   margin-top: 2rem;
 }
 
+/* Note card - nuevo diseño de cards */
 .note-row {
   background-color: #fff;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: grid;
-  grid-column: 1 / -1; /* Ocupa todas las columnas del padre */
-  grid-template-columns: subgrid; /* Hereda las columnas del padre */
+  grid-template-columns: auto 1fr auto auto;
+  gap: 1.5rem;
   align-items: center;
-  gap: 1.5rem; 
+  transition: box-shadow 0.2s, border-color 0.2s;
+  animation: fadeInUp 0.3s ease-out;
 }
 
-.note-row > * {
-  text-align: center; /* Centra el contenido de texto de todas las celdas */
+.note-row:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #007bff;
+}
+
+/* Player */
+.note-row .audio-player {
+  margin: 0;
+  justify-self: start;
+}
+
+/* Note identity section */
+.note-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-grow: 1;
 }
 
 .note-name {
   font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 250px;
 }
 
 /* Contenedor para el tooltip */
 .tooltip-container {
   position: relative;
   display: inline-block;
+  max-width: 100%;
 }
 
 /* El texto del tooltip */
 .tooltip-text {
   visibility: hidden;
-  width: auto; /* Ancho automático según el contenido */
+  width: auto;
   background-color: #333;
   color: #fff;
   text-align: center;
-  border-radius: 6px;
-  padding: 5px 10px;
+  border-radius: 8px;
+  padding: 8px 12px;
   position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Posición encima del elemento */
+  z-index: 1000;
+  bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
-  transition: opacity 0.2s;
-  white-space: nowrap; /* Para que no se parta en varias líneas */
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Muestra el tooltip al pasar el ratón */
 .tooltip-container:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
 
-.note-identity {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-}
-
+/* Space name badge */
 .note-space-name {
-  font-size: 0.85rem;
-  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
   border-width: 2px;
   border-style: solid;
-  border-radius: 0.5rem; /* Menos redondeado */
+  border-radius: 20px;
   font-weight: 600;
-  color: #888; /* Color de texto por defecto */
+  color: #555;
   white-space: nowrap;
-  justify-self: center; /* Asegura que la píldora se centre */
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* Note info section */
+.note-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+.note-duration {
+  font-weight: 600;
+  color: #007bff;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  padding: 0.25rem 0.6rem;
+  background-color: #e3f2fd;
+  border-radius: 12px;
 }
 
 .note-description {
   margin: 0;
   color: #666;
-  white-space: nowrap;
+  font-size: 0.9rem;
+  line-height: 1.4;
   overflow: hidden;
-  text-overflow: ellipsis; 
-  text-align: left; /* La descripción la dejamos a la izquierda */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: right;
+  max-width: 300px;
 }
 
+/* Tags */
 .note-tags {
   display: flex;
   gap: 0.5rem;
-  justify-self: end; /* Alinea el contenedor de tags a la derecha */
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 250px;
 }
 
 .tag-pill {
-  background-color: #e9ecef;
-  color: #495057;
-  padding: 0.25rem 0.6rem;
-  border-radius: 1rem; /* Para que sea bien redondeado */
+  background-color: #f1f3f4;
+  color: #5f6368;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
   font-size: 0.75rem;
   font-weight: 500;
   white-space: nowrap;
+  border: 1px solid #e8eaed;
+  transition: background-color 0.2s;
 }
 
-.note-duration {
-  font-weight: 500;
-  color: #333;
-  white-space: nowrap;
+.tag-pill:hover {
+  background-color: #e8eaed;
 }
 
-.note-row .audio-player {
-  margin-top: 0;
+/* Grid spacer - hidden in new layout */
+.grid-spacer {
+  display: none;
 }
 
-/* --- Responsive para Móvil --- */
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.note-row:nth-child(1) { animation-delay: 0.1s; }
+.note-row:nth-child(2) { animation-delay: 0.2s; }
+.note-row:nth-child(3) { animation-delay: 0.3s; }
+.note-row:nth-child(4) { animation-delay: 0.4s; }
+.note-row:nth-child(5) { animation-delay: 0.5s; }
+
+/* Responsive para móvil */
 @media (max-width: 768px) {
+  .home-container {
+    padding: 0 1rem;
+    margin: 1rem auto;
+  }
+
   .home-header {
     flex-direction: column;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .home-header h1 {
+    font-size: 1.75rem;
   }
 
   .search-controls {
     flex-direction: column;
     width: 100%;
-    margin: 0;
+    gap: 1rem;
   }
 
   .search-input {
     width: 100%;
   }
 
-  .notes-list {
-    display: flex; /* Cambiamos a flex para móvil */
-    flex-direction: column;
-  }
-
   .note-row {
-    display: flex; /* Cambiamos a flex para móvil */
-    flex-direction: row;
-    justify-content: space-between;
-    grid-column: auto; /* Reseteamos propiedades de grid */
-    grid-template-columns: none;
-  }
-
-  .note-description,
-  .grid-spacer {
-    display: none; /* Ocultamos elementos */
-  }
-
-  .note-tags {
-    display: none !important; /* Forzamos la ocultación de los tags */
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: left;
   }
 
   .note-identity {
-    align-items: flex-start; /* Alineamos a la izquierda en móvil */
-    flex-grow: 1; /* Ocupa el espacio disponible */
-    margin: 0 1rem;
+    align-items: flex-start;
+    order: 1;
+  }
+
+  .note-name {
+    max-width: 100%;
+  }
+
+  .note-info {
+    align-items: flex-start;
+    text-align: left;
+    order: 2;
+  }
+
+  .note-description {
+    text-align: left;
+    max-width: 100%;
+    -webkit-line-clamp: 3;
+  }
+
+  .note-tags {
+    justify-content: flex-start;
+    max-width: 100%;
+    order: 3;
+  }
+
+  .note-row .audio-player {
+    order: 4;
+    justify-self: center;
+  }
+
+  .note-duration {
+    align-self: flex-start;
   }
 }
 
-.note-name {
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Contenedor para el tooltip */
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-}
-
-/* El texto del tooltip */
-.tooltip-text {
-  visibility: hidden;
-  width: auto; /* Ancho automático según el contenido */
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 10px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Posición encima del elemento */
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.2s;
-  white-space: nowrap; /* Para que no se parta en varias líneas */
-}
-
-/* Muestra el tooltip al pasar el ratón */
-.tooltip-container:hover .tooltip-text {
-  visibility: visible;
-  opacity: 1;
-}
-
-
-.note-space-name {
-  font-size: 0.85rem;
-  padding: 0.25rem 0.6rem;
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 0.5rem; /* Menos redondeado */
-  font-weight: 600;
-  color: #888; /* Color de texto por defecto */
-  white-space: nowrap;
-  justify-self: center; /* Asegura que la píldora se centre */
-}
-
-.note-description {
-  margin: 0;
-  color: #666;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; 
-  text-align: left; /* La descripción la dejamos a la izquierda */
-}
-
-.note-tags {
-  display: flex;
-  gap: 0.5rem;
-  justify-self: end; /* Alinea el contenedor de tags a la derecha */
-}
-
-.tag-pill {
-  background-color: #e9ecef;
-  color: #495057;
-  padding: 0.25rem 0.6rem;
-  border-radius: 1rem; /* Para que sea bien redondeado */
-  font-size: 0.75rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.note-duration {
-  font-weight: 500;
-  color: #333;
-  white-space: nowrap;
-}
-
-.note-row .audio-player {
-  margin-top: 0;
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .search-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .search-input {
+    width: 200px;
+  }
+  
+  .note-description {
+    max-width: 200px;
+  }
+  
+  .note-tags {
+    max-width: 200px;
+  }
 }
