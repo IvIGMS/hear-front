@@ -19,6 +19,13 @@
   height: 64px;
 }
 
+/* Sección de acciones (upload + logout) */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .navbar-brand a {
   color: #333;
   text-decoration: none;
@@ -70,4 +77,37 @@
 .logout-btn:active {
   transform: translateY(0);
   box-shadow: 0 1px 4px rgba(220, 53, 69, 0.3);
+}
+
+/* Botón de subir audio - destacado */
+.upload-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.upload-btn:hover {
+  background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.upload-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+}
+
+.upload-btn svg {
+  flex-shrink: 0;
 }
