@@ -141,30 +141,41 @@ const Home = () => {
 
               return (
                 <div key={note.id} className="note-row">
-                  <AudioPlayer noteId={note.id} />
-                  <div className="note-identity">
-                    <div className="tooltip-container">
-                      <span className="note-name">
-                        {formatDisplayName(note.nombre)}
-                      </span>
-                      <span className="tooltip-text">{note.nombre}</span>
+                  <div className="note-card-header">
+                    <div className="note-player-section">
+                      <AudioPlayer noteId={note.id} />
+                      <span className="note-duration">{note.duration}s</span>
                     </div>
-                    <span 
-                      className="note-space-name"
-                      style={{ borderColor: spaceColor }}
-                    >
-                      {note.spaceName}
-                    </span>
                   </div>
-                  <div className="note-info">
-                    <span className="note-duration">{note.duration}s</span>
+                  
+                  <div className="note-identity">
+                    <div className="note-title-section">
+                      <div className="tooltip-container">
+                        <h3 className="note-name">
+                          {formatDisplayName(note.nombre)}
+                        </h3>
+                        <span className="tooltip-text">{note.nombre}</span>
+                      </div>
+                      <span 
+                        className="note-space-name"
+                        style={{ borderColor: spaceColor }}
+                      >
+                        {note.spaceName}
+                      </span>
+                    </div>
+                  </div>
+
+                  {note.description && (
                     <p className="note-description">{note.description}</p>
+                  )}
+
+                  {note.tags && note.tags.length > 0 && (
                     <div className="note-tags">
-                      {note.tags && note.tags.map((tag, index) => (
+                      {note.tags.map((tag, index) => (
                         <span key={index} className="tag-pill">{tag}</span>
                       ))}
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}

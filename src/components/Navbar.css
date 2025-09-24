@@ -19,7 +19,20 @@
   height: 64px;
 }
 
-.navbar-brand a,
+.navbar-brand a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navbar-brand a:hover {
+  background-color: #f0f0f0;
+}
+
 .navbar-logout a {
   color: #333;
   text-decoration: none;
@@ -30,7 +43,31 @@
   transition: background-color 0.2s ease-in-out;
 }
 
-.navbar-brand a:hover,
 .navbar-logout a:hover {
   background-color: #f0f0f0;
+}
+
+/* Estilos específicos para el botón de logout */
+.logout-btn {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(220, 53, 69, 0.3);
 }
