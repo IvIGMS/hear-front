@@ -2,12 +2,14 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import UploadAudioModal from './UploadAudioModal';
 import './Navbar.css';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -23,6 +25,20 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   };
 
+  const openUploadModal = () => {
+    setUploadModalOpen(true);
+    setMobileMenuOpen(false); // Cerrar menú móvil si está abierto
+  };
+
+  const closeUploadModal = () => {
+    setUploadModalOpen(false);
+  };
+
+  const handleUploadSuccess = () => {
+    // Recargar la página para mostrar el nuevo audio
+    window.location.reload();
+  };
+
   return (
     <header className="navbar-header">
       <nav className="navbar-container">
@@ -34,7 +50,7 @@ const Navbar = () => {
           </div>
           <div className="navbar-actions">
             {isAuthenticated && (
-              <button className="upload-btn">
+              <button className="upload-btn" onClick={openUploadModal}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 0l4 4h-3v8h-2V4H4l4-4z"/>
                   <path d="M1 12h14v2H1z"/>
@@ -70,7 +86,7 @@ const Navbar = () => {
 
           {/* Upload Button - Icon Only */}
           {isAuthenticated && (
-            <button className="mobile-upload-btn">
+            <button className="mobile-upload-btn" onClick={openUploadModal}>
               <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
                 <path d="M8 0l4 4h-3v8h-2V4H4l4-4z"/>
                 <path d="M1 12h14v2H1z"/>
@@ -85,7 +101,7 @@ const Navbar = () => {
             <a href="/" onClick={closeMobileMenu}>Inicio</a>
             {isAuthenticated && <a href="/spaces" onClick={closeMobileMenu}>Spaces</a>}
             {isAuthenticated && (
-              <button className="mobile-upload-full" onClick={closeMobileMenu}>
+              <button className="mobile-upload-full" onClick={openUploadModal}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 0l4 4h-3v8h-2V4H4l4-4z"/>
                   <path d="M1 12h14v2H1z"/>
@@ -108,6 +124,13 @@ const Navbar = () => {
           <div className="mobile-overlay" onClick={closeMobileMenu}></div>
         )}
       </nav>
+      
+      {/* Upload Modal */}
+      <UploadAudioModal
+        isOpen={uploadModalOpen}
+        onClose={closeUploadModal}
+        onSuccess={handleUploadSuccess}
+      />
     </header>
   );
 };

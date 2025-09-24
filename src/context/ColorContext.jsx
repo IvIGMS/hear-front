@@ -11,7 +11,7 @@ export const ColorProvider = ({ children }) => {
   useEffect(() => {
     const fetchColors = async () => {
       try {
-        const response = await fetch('/api/v1/colors');
+        const response = await fetch('http://localhost:8080/api/v1/colors');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
