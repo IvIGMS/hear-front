@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Spaces.css';
 
 const Spaces = () => {
   const { userToken } = useAuth();
+  const navigate = useNavigate();
   const [spaces, setSpaces] = useState({ admin: [], member: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,6 +42,10 @@ const Spaces = () => {
     }
   }, [userToken]);
 
+  const navigateToSpace = (spaceId) => {
+    navigate(`/space/${spaceId}`);
+  };
+
   if (loading) return <div className="loading-message">Cargando spaces...</div>;
   if (error) return <div className="error-message">Error: {error}</div>;
 
@@ -65,7 +71,11 @@ const Spaces = () => {
           </div>
           <div className={`spaces-grid ${adminCollapsed ? 'collapsed' : ''}`}>
             {spaces.admin.map(space => (
-              <div key={space.id} className="space-card admin-space">
+              <div 
+                key={space.id} 
+                className="space-card admin-space"
+                onClick={() => navigateToSpace(space.id)}
+              >
                 <div className="space-header">
                   <h3 className="space-name">{space.name}</h3>
                   <span className="space-role-badge admin">Admin</span>
@@ -94,7 +104,11 @@ const Spaces = () => {
           </div>
           <div className={`spaces-grid ${memberCollapsed ? 'collapsed' : ''}`}>
             {spaces.member.map(space => (
-              <div key={space.id} className="space-card member-space">
+              <div 
+                key={space.id} 
+                className="space-card member-space"
+                onClick={() => navigateToSpace(space.id)}
+              >
                 <div className="space-header">
                   <h3 className="space-name">{space.name}</h3>
                   <span className="space-role-badge member">Member</span>

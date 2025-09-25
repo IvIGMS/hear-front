@@ -10,6 +10,7 @@ import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Spaces from './pages/Spaces.jsx'
+import SpaceDetail from './pages/SpaceDetail.jsx'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: 'spaces',
         element: <Spaces />,
+      },
+      {
+        path: 'space/:id',
+        element: <SpaceDetail />,
       },
     ],
   },

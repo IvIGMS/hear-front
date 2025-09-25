@@ -144,6 +144,7 @@
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.2s, border-color 0.2s;
+  cursor: pointer;
 }
 
 .space-card:hover {
