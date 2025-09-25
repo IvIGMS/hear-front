@@ -15,6 +15,11 @@ const Spaces = () => {
   const [spaceToDelete, setSpaceToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState(null);
+  const [newSpaceName, setNewSpaceName] = useState('');
+  const [newSpaceDescription, setNewSpaceDescription] = useState('');
 
   useEffect(() => {
     const fetchSpaces = async () => {
@@ -105,6 +110,64 @@ const Spaces = () => {
     setDeleteError(null);
   };
 
+  const handleCreateClick = () => {
+    setCreateModalOpen(true);
+    setCreateError(null);
+    setNewSpaceName('');
+    setNewSpaceDescription('');
+  };
+
+  const handleCreateConfirm = async () => {
+    if (!newSpaceName.trim()) {
+      setCreateError('El nombre del space es obligatorio');
+      return;
+    }
+
+    setIsCreating(true);
+    setCreateError(null);
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/spaces', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: newSpaceName.trim(),
+          description: newSpaceDescription.trim() || undefined
+        })
+      });
+
+      if (response.status === 201) {
+        const newSpace = await response.json();
+        setSpaces(prevSpaces => ({
+          admin: [newSpace, ...prevSpaces.admin],
+          member: prevSpaces.member
+        }));
+        setCreateModalOpen(false);
+        setNewSpaceName('');
+        setNewSpaceDescription('');
+        setCreateError(null);
+      } else {
+        const errorMessage = await response.text();
+        setCreateError(errorMessage || `Error creando space: ${response.status}`);
+      }
+    } catch (e) {
+      console.error('Error creando space:', e);
+      setCreateError('Error de conexión. No se pudo crear el space.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleCreateCancel = () => {
+    setCreateModalOpen(false);
+    setNewSpaceName('');
+    setNewSpaceDescription('');
+    setCreateError(null);
+  };
+
   if (loading) return <div className="loading-message">Cargando spaces...</div>;
   if (error) return <div className="error-message">Error: {error}</div>;
 
@@ -168,6 +231,19 @@ const Spaces = () => {
                 )}
               </div>
             ))}
+            <div 
+              className="space-card create-space-card"
+              onClick={handleCreateClick}
+            >
+              <div className="create-space-content">
+                <div className="create-space-icon">
+                  <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                  </svg>
+                </div>
+                <h3 className="create-space-title">Crear Space</h3>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -265,6 +341,58 @@ const Spaces = () => {
                 disabled={isDeleting}
               >
                 {isDeleting ? 'Borrando...' : 'Borrar Space'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de creación de space */}
+      {createModalOpen && (
+        <div className="delete-modal-overlay" onClick={handleCreateCancel}>
+          <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Crear nuevo Space</h3>
+            <div className="create-space-form">
+              <div className="form-group">
+                <input
+                  type="text"
+                  value={newSpaceName}
+                  onChange={(e) => setNewSpaceName(e.target.value)}
+                  placeholder="Nombre del space *"
+                  className="create-space-input"
+                  maxLength={50}
+                />
+              </div>
+              <div className="form-group">
+                <textarea
+                  value={newSpaceDescription}
+                  onChange={(e) => setNewSpaceDescription(e.target.value)}
+                  placeholder="Descripción del space (opcional)"
+                  className="create-space-textarea"
+                  maxLength={200}
+                  rows={3}
+                />
+              </div>
+            </div>
+            {createError && (
+              <div className="delete-error-message">
+                {createError}
+              </div>
+            )}
+            <div className="delete-modal-actions">
+              <button 
+                className="delete-cancel-btn" 
+                onClick={handleCreateCancel}
+                disabled={isCreating}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="create-confirm-btn" 
+                onClick={handleCreateConfirm}
+                disabled={isCreating || !newSpaceName.trim()}
+              >
+                {isCreating ? 'Creando...' : 'Crear Space'}
               </button>
             </div>
           </div>
