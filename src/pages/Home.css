@@ -43,8 +43,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .search-input::placeholder {
@@ -89,12 +89,13 @@
   gap: 0.75rem;
   transition: box-shadow 0.2s, border-color 0.2s;
   animation: fadeInUp 0.3s ease-out;
-  border-left: 4px solid #555;
+  border-left: 4px solid #667eea;
 }
 
 .note-row:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+  border-left-color: #5a4fcf;
 }
 
 /* Card header con audio player y metadata */
@@ -117,11 +118,11 @@
 
 .note-duration {
   font-weight: 600;
-  color: #007bff;
+  color: #667eea;
   font-size: 0.8rem;
   white-space: nowrap;
   padding: 0.2rem 0.5rem;
-  background-color: #e3f2fd;
+  background-color: rgba(102, 126, 234, 0.1);
   border-radius: 10px;
 }
 

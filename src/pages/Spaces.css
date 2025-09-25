@@ -148,16 +148,24 @@
 }
 
 .space-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+}
+
+.space-card.admin-space:hover {
+  border-left-color: #5a4fcf;
+}
+
+.space-card.member-space:hover {
+  border-left-color: #634287;
 }
 
 .space-card.admin-space {
-  border-left: 4px solid #007bff;
+  border-left: 4px solid #667eea;
 }
 
 .space-card.member-space {
-  border-left: 4px solid #28a745;
+  border-left: 4px solid #764ba2;
 }
 
 /* Space content */

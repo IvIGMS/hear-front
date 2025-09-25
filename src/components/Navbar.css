@@ -1,8 +1,9 @@
 
 .navbar-header {
   width: 100%;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: none;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
   padding: 0 2rem; 
   box-sizing: border-box; 
   position: sticky; /* La magia para que se quede fija */
@@ -49,17 +50,19 @@
 }
 
 .navbar-brand a {
-  color: #333;
+  color: white;
   text-decoration: none;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-brand a:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
 }
 
 .navbar-logout a {
@@ -103,31 +106,33 @@
 
 /* Botón de subir audio - destacado */
 .upload-btn {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-  color: #fff;
-  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   font-size: 0.9rem;
   font-weight: 600;
   padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+  border-radius: 25px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   font-family: inherit;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  backdrop-filter: blur(10px);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .upload-btn:hover {
-  background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
 .upload-btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .upload-btn svg {
