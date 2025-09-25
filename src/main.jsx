@@ -11,6 +11,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Spaces from './pages/Spaces.jsx'
 import SpaceDetail from './pages/SpaceDetail.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         path: 'space/:id',
         element: <SpaceDetail />,
       },
+      {
+        path: '*',
+        element: <NotFound />,
+      },
     ],
   },
   {
@@ -38,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />,
+  },
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ])
 

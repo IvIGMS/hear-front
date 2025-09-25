@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useColors } from '../context/ColorContext';
 import AudioPlayer from '../components/AudioPlayer';
+import NotFound from './NotFound';
 import './SpaceDetail.css';
 
 const SpaceDetail = () => {
@@ -64,6 +65,9 @@ const SpaceDetail = () => {
         });
         
         if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('SPACE_NOT_FOUND');
+          }
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
@@ -118,6 +122,9 @@ const SpaceDetail = () => {
   }
 
   if (error) {
+    if (error === 'SPACE_NOT_FOUND') {
+      return <NotFound />;
+    }
     return (
       <div className="space-detail-container">
         <div className="error-message">Error: {error}</div>
