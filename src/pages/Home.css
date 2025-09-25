@@ -23,6 +23,74 @@
   font-weight: 600;
 }
 
+/* Controles de notas - cabecera de las tarjetas */
+.notes-controls {
+  margin-bottom: 1.5rem;
+}
+
+/* Sección de filtros colapsable */
+.filters-section {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px 12px 8px 8px;
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(224, 224, 224, 0.5);
+}
+
+.filters-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.filters-collapse-btn {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filters-collapse-btn:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+  color: #5a4fcf;
+}
+
+.filters-collapse-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.filters-collapse-btn.collapsed svg {
+  transform: rotate(-90deg);
+}
+
+.filters-content {
+  max-height: 200px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.filters-content.collapsed {
+  max-height: 0;
+  padding: 0 1.5rem;
+}
+
 /* Controles de búsqueda */
 .search-controls {
   display: flex;
@@ -74,7 +142,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
 }
 
 /* Note card - diseño vertical compacto */
@@ -270,6 +338,26 @@
     font-size: 1.75rem;
   }
 
+  .notes-controls {
+    margin-bottom: 1rem;
+  }
+
+  .filters-section {
+    width: 100%;
+  }
+
+  .filters-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .filters-title {
+    font-size: 0.9rem;
+  }
+
+  .filters-content {
+    padding: 0 1rem 1rem;
+  }
+
   .search-controls {
     flex-direction: column;
     width: 100%;
@@ -354,12 +442,17 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 
+  .filters-section {
+    width: 100%;
+  }
+
   .search-controls {
     flex-direction: column;
     gap: 0.75rem;
   }
   
   .search-input {
-    width: 250px;
+    width: 100%;
+    max-width: 250px;
   }
 }

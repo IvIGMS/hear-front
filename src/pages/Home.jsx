@@ -13,6 +13,7 @@ const Home = () => {
   const [pageSize, setPageSize] = useState(5);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(true);
 
   const { colorMap } = useColors(); // Usar el contexto de colores
 
@@ -106,27 +107,46 @@ const Home = () => {
     <div className="home-container">
       <div className="home-header">
         <h1>Mis Notas de Voz</h1>
-        <div className="search-controls">
-          <input
-            type="text"
-            placeholder="Buscar por nombre de nota..."
-            value={voiceNoteNameQueryParam}
-            onChange={(e) => setVoiceNoteNameQueryParam(e.target.value)}
-            className="search-input"
-          />
-          <input
-            type="text"
-            placeholder="Buscar por nombre de espacio..."
-            value={spaceNameQueryParam}
-            onChange={(e) => setSpaceNameQueryParam(e.target.value)}
-            className="search-input"
-          />
-        </div>
         <PageSizeSelector 
           currentPageSize={pageSize}
           onPageSizeChange={handlePageSizeChange}
           options={[5, 10, 25]}
         />
+      </div>
+
+      {/* Controles de filtros - cabecera de las tarjetas */}
+      <div className="notes-controls">
+        <div className="filters-section">
+          <div className="filters-header" onClick={() => setFiltersCollapsed(!filtersCollapsed)}>
+            <h3 className="filters-title">Filtros</h3>
+            <button 
+              className={`filters-collapse-btn ${filtersCollapsed ? 'collapsed' : ''}`}
+              aria-label={filtersCollapsed ? 'Expandir filtros' : 'Colapsar filtros'}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 10.5l-4-4h8l-4 4z"/>
+              </svg>
+            </button>
+          </div>
+          <div className={`filters-content ${filtersCollapsed ? 'collapsed' : ''}`}>
+            <div className="search-controls">
+              <input
+                type="text"
+                placeholder="Buscar por nombre de audio..."
+                value={voiceNoteNameQueryParam}
+                onChange={(e) => setVoiceNoteNameQueryParam(e.target.value)}
+                className="search-input"
+              />
+              <input
+                type="text"
+                placeholder="Buscar por nombre de espacio..."
+                value={spaceNameQueryParam}
+                onChange={(e) => setSpaceNameQueryParam(e.target.value)}
+                className="search-input"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {isLoading ? (
