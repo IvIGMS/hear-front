@@ -19,6 +19,10 @@ const SpaceDetail = () => {
   const [pageSize, setPageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   // Estados para los campos de búsqueda
   const [voiceNoteNameQueryParam, setVoiceNoteNameQueryParam] = useState('');
@@ -117,6 +121,57 @@ const SpaceDetail = () => {
     navigate('/spaces');
   };
 
+  const handleDeleteClick = (note) => {
+    setNoteToDelete(note);
+    setDeleteModalOpen(true);
+    setDeleteError(null); // Limpiar error previo
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!noteToDelete) return;
+
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/voice-notes/${noteToDelete.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'accept': '*/*'
+        }
+      });
+
+      if (response.status === 204) {
+        // Actualización optimista - quitar de la lista
+        setVoiceNotes(prevNotes => prevNotes.filter(note => note.id !== noteToDelete.id));
+        setDeleteModalOpen(false);
+        setNoteToDelete(null);
+        setDeleteError(null);
+      } else if (response.status === 409) {
+        // Conflict - leer string del servidor
+        try {
+          const errorMessage = await response.text();
+          setDeleteError(errorMessage || 'No se pudo borrar el audio. Error de conflicto.');
+        } catch {
+          setDeleteError('No se pudo borrar el audio. Error de conflicto.');
+        }
+      } else {
+        setDeleteError(`No se pudo borrar el audio. Error: ${response.status}`);
+      }
+    } catch (e) {
+      console.error('Error borrando audio:', e);
+      setDeleteError('Error de conexión. No se pudo borrar el audio.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setNoteToDelete(null);
+    setDeleteError(null);
+  };
+
   if (isLoading) {
     return <div className="loading-message">Cargando space...</div>;
   }
@@ -201,6 +256,16 @@ const SpaceDetail = () => {
                     <AudioPlayer noteId={note.id} />
                     <span className="note-duration">{note.duration}s</span>
                   </div>
+                  <button 
+                    className="delete-note-btn"
+                    onClick={() => handleDeleteClick(note)}
+                    title="Borrar audio"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                      <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                    </svg>
+                  </button>
                 </div>
                 
                 <div className="note-identity">
@@ -236,6 +301,41 @@ const SpaceDetail = () => {
           </div>
 
         </>
+      )}
+
+      {/* Modal de confirmación de borrado */}
+      {deleteModalOpen && noteToDelete && (
+        <div className="delete-modal-overlay" onClick={handleDeleteCancel}>
+          <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>¿Borrar audio?</h3>
+            <p>
+              ¿Estás seguro de que quieres eliminar <strong>"{formatDisplayName(noteToDelete.nombre)}"</strong>?
+              <br />
+              Esta acción no se puede deshacer.
+            </p>
+            {deleteError && (
+              <div className="delete-error-message">
+                {deleteError}
+              </div>
+            )}
+            <div className="delete-modal-actions">
+              <button 
+                className="delete-cancel-btn" 
+                onClick={handleDeleteCancel}
+                disabled={isDeleting}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="delete-confirm-btn" 
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Borrando...' : 'Borrar'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
