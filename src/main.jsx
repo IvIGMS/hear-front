@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext';
 import { ColorProvider } from './context/ColorContext';
+import { AudioProvider } from './context/AudioContext';
 import './index.css'
 
 import RootLayout from './layouts/RootLayout.jsx'
@@ -54,7 +55,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <ColorProvider>
-        <RouterProvider router={router} />
+        <AudioProvider>
+          <RouterProvider router={router} />
+        </AudioProvider>
       </ColorProvider>
     </AuthProvider>
   </StrictMode>,

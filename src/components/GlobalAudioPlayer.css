@@ -1,0 +1,219 @@
+/* Reproductor global fijo en la parte inferior */
+.global-audio-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  color: white;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideUpIn 0.3s ease-out;
+}
+
+@keyframes slideUpIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.global-player-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 2rem;
+  display: grid;
+  grid-template-columns: 200px 1fr 60px;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Info del audio */
+.audio-info {
+  min-width: 200px;
+}
+
+.audio-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.2rem 0;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.audio-space {
+  font-size: 0.75rem;
+  margin: 0;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Controles centrales */
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Sección de cierre */
+.audio-close {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.control-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.play-pause-btn {
+  width: 56px;
+  height: 56px;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Sección de progreso */
+.progress-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-grow: 1;
+  max-width: 500px;
+}
+
+.time-current,
+.time-total {
+  font-size: 0.8rem;
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* Barra de progreso */
+.progress-bar {
+  flex-grow: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  transition: height 0.2s ease;
+}
+
+.progress-bar:hover {
+  height: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: white;
+  border-radius: 3px;
+  transition: width 0.1s ease;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+.progress-handle {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar:hover .progress-handle {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .global-player-content {
+    padding: 0.5rem 1rem;
+    gap: 1rem;
+    grid-template-columns: 1fr 40px;
+  }
+
+  /* Ocultar info del audio en móvil */
+  .audio-info {
+    display: none;
+  }
+
+  .audio-controls {
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .control-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .play-pause-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .progress-section {
+    gap: 0.75rem;
+    max-width: none;
+  }
+
+  .time-current,
+  .time-total {
+    font-size: 0.75rem;
+    min-width: 35px;
+  }
+
+  .audio-close {
+    justify-content: center;
+  }
+}
+
+/* Ajustes para cuando está visible el reproductor global */
+body.audio-player-active {
+  padding-bottom: 80px;
+}
+
+@media (max-width: 640px) {
+  body.audio-player-active {
+    padding-bottom: 70px;
+  }
+}

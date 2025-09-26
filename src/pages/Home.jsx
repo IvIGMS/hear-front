@@ -163,7 +163,11 @@ const Home = () => {
                 <div key={note.id} className="note-row">
                   <div className="note-card-header">
                     <div className="note-player-section">
-                      <AudioPlayer noteId={note.id} />
+                      <AudioPlayer 
+                        noteId={note.id}
+                        noteName={note.nombre}
+                        spaceName={note.spaceName}
+                      />
                       <span className="note-duration">{note.duration}s</span>
                     </div>
                   </div>
