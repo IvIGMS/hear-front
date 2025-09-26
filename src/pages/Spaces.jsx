@@ -177,22 +177,21 @@ const Spaces = () => {
         <h1>Spaces</h1>
       </div>
       
-      {spaces.admin.length > 0 && (
-        <div className="spaces-section">
-          <div className="section-header">
-            <h2 className="admin-title">Admin Spaces</h2>
-            <button 
-              className={`collapse-btn ${adminCollapsed ? 'collapsed' : ''}`}
-              onClick={() => setAdminCollapsed(!adminCollapsed)}
-              aria-label={adminCollapsed ? 'Expandir Admin Spaces' : 'Colapsar Admin Spaces'}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 10.5l-4-4h8l-4 4z"/>
-              </svg>
-            </button>
-          </div>
-          <div className={`spaces-grid ${adminCollapsed ? 'collapsed' : ''}`}>
-            {spaces.admin.map(space => (
+      <div className="spaces-section">
+        <div className="section-header">
+          <h2 className="admin-title">Admin Spaces</h2>
+          <button 
+            className={`collapse-btn ${adminCollapsed ? 'collapsed' : ''}`}
+            onClick={() => setAdminCollapsed(!adminCollapsed)}
+            aria-label={adminCollapsed ? 'Expandir Admin Spaces' : 'Colapsar Admin Spaces'}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 10.5l-4-4h8l-4 4z"/>
+            </svg>
+          </button>
+        </div>
+        <div className={`spaces-grid ${adminCollapsed ? 'collapsed' : ''}`}>
+          {spaces.admin.map(space => (
               <div 
                 key={space.id} 
                 className="space-card admin-space"
@@ -246,7 +245,6 @@ const Spaces = () => {
             </div>
           </div>
         </div>
-      )}
 
       {spaces.member.length > 0 && (
         <div className="spaces-section">
@@ -308,7 +306,7 @@ const Spaces = () => {
 
       {spaces.admin.length === 0 && spaces.member.length === 0 && (
         <div className="no-spaces-message">
-          <p>No tienes spaces disponibles.</p>
+          <p>Aún no tienes spaces. ¡Crea tu primer space usando el botón de arriba!</p>
         </div>
       )}
 

@@ -51,6 +51,23 @@
   border: 1px solid #e9ecef;
 }
 
+/* Empty section message */
+.empty-section-message {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #999;
+  padding: 2rem 1rem;
+  background-color: #fafbfc;
+  border-radius: 6px;
+  border: 1px dashed #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.empty-section-message p {
+  margin: 0;
+  font-style: italic;
+}
+
 /* Secciones de spaces */
 .spaces-section {
   margin-bottom: 2rem;

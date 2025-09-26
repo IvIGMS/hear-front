@@ -141,10 +141,12 @@ const UploadAudioModal = ({ isOpen, onClose, onSuccess }) => {
         onSuccess && onSuccess();
         handleClose();
       } else {
-        setError('Error al subir el audio');
+        const errorMessage = await response.text();
+        setError(errorMessage || `Error al subir el audio: ${response.status}`);
       }
     } catch (err) {
-      setError('Error de conexión');
+      console.error('Error subiendo audio:', err);
+      setError('Error de conexión. No se pudo subir el audio.');
     } finally {
       setLoading(false);
     }
@@ -172,7 +174,6 @@ const UploadAudioModal = ({ isOpen, onClose, onSuccess }) => {
     <div className="upload-modal-overlay" onClick={handleClose}>
       <div className="upload-modal-content" onClick={(e) => e.stopPropagation()}>
         <form onSubmit={handleSubmit} className="upload-form">
-          {error && <div className="error-message">{error}</div>}
 
           {/* Selección de Space */}
           <div className="form-group">
@@ -284,6 +285,8 @@ const UploadAudioModal = ({ isOpen, onClose, onSuccess }) => {
               )}
             </div>
           </div>
+
+          {error && <div className="delete-error-message">{error}</div>}
 
           {/* Botones de acción */}
           <div className="form-actions">
