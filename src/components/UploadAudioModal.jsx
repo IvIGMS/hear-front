@@ -60,12 +60,13 @@ const UploadAudioModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleFile = (file) => {
     if (file) {
-      // Validar que sea un archivo de audio MP3
-      if (file.type === 'audio/mpeg' || file.type === 'audio/mp3' || file.name.toLowerCase().endsWith('.mp3')) {
+      // Validar que sea un archivo de audio MP3 o OPUS
+      if (file.type === 'audio/mpeg' || file.type === 'audio/mp3' || file.type === 'audio/opus' || 
+          file.name.toLowerCase().endsWith('.mp3') || file.name.toLowerCase().endsWith('.opus')) {
         setAudioFile(file);
         setError('');
       } else {
-        setError('Por favor selecciona un archivo MP3 válido');
+        setError('Por favor selecciona un archivo MP3 o OPUS válido');
         setAudioFile(null);
       }
     }
@@ -258,7 +259,7 @@ const UploadAudioModal = ({ isOpen, onClose, onSuccess }) => {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".mp3,audio/mpeg,audio/mp3"
+                accept=".mp3,.opus,audio/mpeg,audio/mp3,audio/opus"
                 onChange={handleFileSelect}
                 style={{ display: 'none' }}
               />
@@ -278,7 +279,7 @@ const UploadAudioModal = ({ isOpen, onClose, onSuccess }) => {
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/>
                   </svg>
-                  <p>Arrastra tu archivo MP3 aquí o haz clic para seleccionar</p>
+                  <p>Arrastra tu archivo MP3 o OPUS aquí o haz clic para seleccionar</p>
                 </div>
               )}
             </div>
