@@ -20,6 +20,17 @@ const Spaces = () => {
   const [createError, setCreateError] = useState(null);
   const [newSpaceName, setNewSpaceName] = useState('');
   const [newSpaceDescription, setNewSpaceDescription] = useState('');
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [spaceToInvite, setSpaceToInvite] = useState(null);
+  const [actionsMenuOpen, setActionsMenuOpen] = useState(null);
+  const [availableUsers, setAvailableUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRole, setSelectedRole] = useState('MEMBER');
+  const [userSearch, setUserSearch] = useState('');
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [inviteError, setInviteError] = useState(null);
+  const [isInviting, setIsInviting] = useState(false);
 
   useEffect(() => {
     const fetchSpaces = async () => {
@@ -50,6 +61,17 @@ const Spaces = () => {
       fetchSpaces();
     }
   }, [userToken]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionsMenuOpen && !event.target.closest('.space-actions-container')) {
+        setActionsMenuOpen(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [actionsMenuOpen]);
 
   const navigateToSpace = (spaceId) => {
     navigate(`/space/${spaceId}`);
@@ -168,6 +190,122 @@ const Spaces = () => {
     setCreateError(null);
   };
 
+  const handleActionsClick = (spaceId, event) => {
+    event.stopPropagation();
+    setActionsMenuOpen(actionsMenuOpen === spaceId ? null : spaceId);
+  };
+
+  const handleInviteClick = (space, event) => {
+    event.stopPropagation();
+    setSpaceToInvite(space);
+    setInviteModalOpen(true);
+    setActionsMenuOpen(null);
+    fetchAvailableUsers(space.id);
+  };
+
+  const fetchAvailableUsers = async (spaceId) => {
+    setLoadingUsers(true);
+    setInviteError(null);
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/users/${spaceId}/can-be-invited`, {
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const users = await response.json();
+        setAvailableUsers(users);
+        setFilteredUsers(users);
+      } else {
+        const errorMessage = await response.text();
+        setInviteError(errorMessage || `Error al cargar usuarios: ${response.status}`);
+      }
+    } catch (err) {
+      console.error('Error cargando usuarios:', err);
+      setInviteError('Error de conexión. No se pudieron cargar los usuarios.');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!userSearch.trim()) {
+        setFilteredUsers(availableUsers);
+      } else {
+        const filtered = availableUsers.filter(user => 
+          user.firstname.toLowerCase().includes(userSearch.toLowerCase()) ||
+          user.lastname.toLowerCase().includes(userSearch.toLowerCase()) ||
+          user.email.toLowerCase().includes(userSearch.toLowerCase())
+        );
+        setFilteredUsers(filtered);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [userSearch, availableUsers]);
+
+  const handleInviteCancel = () => {
+    setInviteModalOpen(false);
+    setSpaceToInvite(null);
+    setSelectedUser(null);
+    setSelectedRole('MEMBER');
+    setUserSearch('');
+    setAvailableUsers([]);
+    setFilteredUsers([]);
+    setInviteError(null);
+  };
+
+  const handleInviteConfirm = async () => {
+    if (!selectedUser) {
+      setInviteError('Por favor selecciona un usuario');
+      return;
+    }
+
+    setIsInviting(true);
+    setInviteError(null);
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/spaces/invitations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: selectedUser.id,
+          spaceId: spaceToInvite.id,
+          role: selectedRole
+        })
+      });
+
+      if (response.ok) {
+        const invitation = await response.json();
+        console.log('Invitación enviada:', invitation);
+        handleInviteCancel();
+        // TODO: Mostrar mensaje de éxito o actualizar lista
+      } else {
+        const errorMessage = await response.text();
+        setInviteError(errorMessage || `Error enviando invitación: ${response.status}`);
+      }
+    } catch (err) {
+      console.error('Error enviando invitación:', err);
+      setInviteError('Error de conexión. No se pudo enviar la invitación.');
+    } finally {
+      setIsInviting(false);
+    }
+  };
+
+  const handleDeleteClickFromMenu = (space, event) => {
+    event.stopPropagation();
+    setSpaceToDelete(space);
+    setDeleteModalOpen(true);
+    setDeleteError(null);
+    setActionsMenuOpen(null);
+  };
+
   if (loading) return <div className="loading-message">Cargando spaces...</div>;
   if (error) return <div className="error-message">Error: {error}</div>;
 
@@ -201,16 +339,42 @@ const Spaces = () => {
                   <h3 className="space-name">{space.name}</h3>
                   <div className="space-header-actions">
                     <span className="space-role-badge admin">Admin</span>
-                    <button 
-                      className="delete-space-btn"
-                      onClick={(e) => handleDeleteClick(space, e)}
-                      title="Borrar space"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                        <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                      </svg>
-                    </button>
+                    <div className="space-actions-container">
+                      <button 
+                        className="space-actions-btn"
+                        onClick={(e) => handleActionsClick(space.id, e)}
+                        title="Acciones del space"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                        </svg>
+                      </button>
+                      
+                      {actionsMenuOpen === space.id && (
+                        <div className="space-actions-menu">
+                          <div 
+                            className="space-action-item"
+                            onClick={(e) => handleDeleteClickFromMenu(space, e)}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                              <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                            Eliminar space
+                          </div>
+                          <div 
+                            className="space-action-item"
+                            onClick={(e) => handleInviteClick(space, e)}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"/>
+                              <path d="M14 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 6Zm0-3a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 3Zm0 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5Z"/>
+                            </svg>
+                            Añadir usuario
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <p className="space-description">{space.description}</p>
@@ -391,6 +555,117 @@ const Spaces = () => {
                 disabled={isCreating || !newSpaceName.trim()}
               >
                 {isCreating ? 'Creando...' : 'Crear Space'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de invitación de usuario */}
+      {inviteModalOpen && spaceToInvite && (
+        <div className="delete-modal-overlay" onClick={handleInviteCancel}>
+          <div className="delete-modal-content invite-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Invitar usuario a "{spaceToInvite.name}"</h3>
+            
+            <div className="invite-form">
+              {/* Buscador de usuarios */}
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Buscar usuario por nombre o email..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="user-search-input"
+                />
+              </div>
+
+              {/* Usuario seleccionado o Lista de usuarios */}
+              {selectedUser ? (
+                <div className="selected-user-container">
+                  <div className="selected-user-item">
+                    <div className="user-info">
+                      <div className="user-name">{selectedUser.firstname} {selectedUser.lastname}</div>
+                      <div className="user-email">{selectedUser.email}</div>
+                    </div>
+                    <button
+                      type="button"
+                      className="change-user-btn"
+                      onClick={() => setSelectedUser(null)}
+                      title="Cambiar usuario"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="users-list-container">
+                  {loadingUsers ? (
+                    <div className="loading-users">Cargando usuarios...</div>
+                  ) : filteredUsers.length === 0 ? (
+                    <div className="no-users">
+                      {userSearch ? 'No se encontraron usuarios con ese criterio' : 'No hay usuarios disponibles para invitar'}
+                    </div>
+                  ) : (
+                    <div className="users-list">
+                      {filteredUsers.map(user => (
+                        <div
+                          key={user.id}
+                          className="user-item"
+                          onClick={() => setSelectedUser(user)}
+                        >
+                          <div className="user-info">
+                            <div className="user-name">{user.firstname} {user.lastname}</div>
+                            <div className="user-email">{user.email}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Selector de rol */}
+              {selectedUser && (
+                <div className="form-group">
+                  <label>Rol en el space:</label>
+                  <div className="role-toggle-container">
+                    <button
+                      type="button"
+                      className={`role-toggle-btn ${selectedRole === 'MEMBER' ? 'active' : ''}`}
+                      onClick={() => setSelectedRole('MEMBER')}
+                    >
+                      Miembro
+                    </button>
+                    <button
+                      type="button"
+                      className={`role-toggle-btn ${selectedRole === 'ADMIN' ? 'active' : ''}`}
+                      onClick={() => setSelectedRole('ADMIN')}
+                    >
+                      Administrador
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {inviteError && <div className="delete-error-message">{inviteError}</div>}
+            
+            <div className="delete-modal-actions">
+              <button 
+                className="delete-cancel-btn" 
+                onClick={handleInviteCancel}
+                disabled={isInviting}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="create-confirm-btn" 
+                onClick={handleInviteConfirm}
+                disabled={isInviting || !selectedUser}
+              >
+                {isInviting ? 'Enviando...' : 'Enviar Invitación'}
               </button>
             </div>
           </div>
