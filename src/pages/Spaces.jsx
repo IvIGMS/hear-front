@@ -40,6 +40,9 @@ const Spaces = () => {
   const [loadingUsersToRemove, setLoadingUsersToRemove] = useState(false);
   const [removeError, setRemoveError] = useState(null);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileActionsSpace, setMobileActionsSpace] = useState(null);
+  const [mobileModalClosing, setMobileModalClosing] = useState(false);
 
   useEffect(() => {
     const fetchSpaces = async () => {
@@ -81,6 +84,16 @@ const Spaces = () => {
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, [actionsMenuOpen]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const navigateToSpace = (spaceId) => {
     navigate(`/space/${spaceId}`);
@@ -201,7 +214,20 @@ const Spaces = () => {
 
   const handleActionsClick = (spaceId, event) => {
     event.stopPropagation();
-    setActionsMenuOpen(actionsMenuOpen === spaceId ? null : spaceId);
+    if (isMobile) {
+      const space = [...spaces.admin, ...spaces.member].find(s => s.id === spaceId);
+      setMobileActionsSpace(space);
+    } else {
+      setActionsMenuOpen(actionsMenuOpen === spaceId ? null : spaceId);
+    }
+  };
+
+  const handleMobileActionsCancel = () => {
+    setMobileModalClosing(true);
+    setTimeout(() => {
+      setMobileActionsSpace(null);
+      setMobileModalClosing(false);
+    }, 300); // Duración de la animación
   };
 
   const handleInviteClick = (space, event) => {
@@ -209,6 +235,11 @@ const Spaces = () => {
     setSpaceToInvite(space);
     setInviteModalOpen(true);
     setActionsMenuOpen(null);
+    if (isMobile && mobileActionsSpace) {
+      handleMobileActionsCancel();
+    } else {
+      setMobileActionsSpace(null);
+    }
     fetchAvailableUsers(space.id);
   };
 
@@ -330,6 +361,11 @@ const Spaces = () => {
     setDeleteModalOpen(true);
     setDeleteError(null);
     setActionsMenuOpen(null);
+    if (isMobile && mobileActionsSpace) {
+      handleMobileActionsCancel();
+    } else {
+      setMobileActionsSpace(null);
+    }
   };
 
   const handleRemoveUserClick = (space, event) => {
@@ -337,6 +373,11 @@ const Spaces = () => {
     setSpaceToRemoveFrom(space);
     setRemoveModalOpen(true);
     setActionsMenuOpen(null);
+    if (isMobile && mobileActionsSpace) {
+      handleMobileActionsCancel();
+    } else {
+      setMobileActionsSpace(null);
+    }
     fetchUsersToRemove(space.id);
   };
 
@@ -460,7 +501,7 @@ const Spaces = () => {
                         </svg>
                       </button>
                       
-                      {actionsMenuOpen === space.id && (
+                      {actionsMenuOpen === space.id && !isMobile && (
                         <div className="space-actions-menu">
                           <div 
                             className="space-action-item"
@@ -879,6 +920,59 @@ const Spaces = () => {
                 {isRemoving ? 'Eliminando...' : 'Eliminar Usuario'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de acciones para móvil */}
+      {mobileActionsSpace && isMobile && (
+        <div className="mobile-modal-overlay" onClick={handleMobileActionsCancel}>
+          <div className={`mobile-actions-modal ${mobileModalClosing ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+            <div className="modal-handle"></div>
+            <h3>Acciones para "{mobileActionsSpace.name}"</h3>
+            
+            <div className="mobile-actions-list">
+              <button 
+                className="mobile-action-btn delete-action"
+                onClick={(e) => handleDeleteClickFromMenu(mobileActionsSpace, e)}
+              >
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                  <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                </svg>
+                Eliminar space
+              </button>
+              
+              <button 
+                className="mobile-action-btn invite-action"
+                onClick={(e) => handleInviteClick(mobileActionsSpace, e)}
+              >
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"/>
+                  <path d="M14 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 6Zm0-3a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 3Zm0 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5Z"/>
+                </svg>
+                Añadir usuario
+              </button>
+              
+              <button 
+                className="mobile-action-btn remove-action"
+                onClick={(e) => handleRemoveUserClick(mobileActionsSpace, e)}
+              >
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                  <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                  <path d="M9.854 6.146a.5.5 0 0 1 0 .708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708L8 7.293l1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                </svg>
+                Eliminar usuario
+              </button>
+            </div>
+            
+            <button 
+              className="mobile-actions-cancel"
+              onClick={handleMobileActionsCancel}
+            >
+              Cancelar
+            </button>
           </div>
         </div>
       )}
