@@ -335,8 +335,12 @@
   color: #dc3545;
 }
 
-.space-action-item:last-child:hover {
+.space-action-item:nth-child(2):hover {
   color: #667eea;
+}
+
+.space-action-item:last-child:hover {
+  color: #dc3545;
 }
 
 .space-name {

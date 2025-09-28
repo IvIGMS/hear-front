@@ -31,6 +31,15 @@ const Spaces = () => {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [inviteError, setInviteError] = useState(null);
   const [isInviting, setIsInviting] = useState(false);
+  const [removeModalOpen, setRemoveModalOpen] = useState(false);
+  const [spaceToRemoveFrom, setSpaceToRemoveFrom] = useState(null);
+  const [availableUsersToRemove, setAvailableUsersToRemove] = useState([]);
+  const [filteredUsersToRemove, setFilteredUsersToRemove] = useState([]);
+  const [selectedUserToRemove, setSelectedUserToRemove] = useState(null);
+  const [userRemoveSearch, setUserRemoveSearch] = useState('');
+  const [loadingUsersToRemove, setLoadingUsersToRemove] = useState(false);
+  const [removeError, setRemoveError] = useState(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   useEffect(() => {
     const fetchSpaces = async () => {
@@ -247,6 +256,23 @@ const Spaces = () => {
     return () => clearTimeout(timeoutId);
   }, [userSearch, availableUsers]);
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!userRemoveSearch.trim()) {
+        setFilteredUsersToRemove(availableUsersToRemove);
+      } else {
+        const filtered = availableUsersToRemove.filter(user => 
+          user.firstname.toLowerCase().includes(userRemoveSearch.toLowerCase()) ||
+          user.lastname.toLowerCase().includes(userRemoveSearch.toLowerCase()) ||
+          user.email.toLowerCase().includes(userRemoveSearch.toLowerCase())
+        );
+        setFilteredUsersToRemove(filtered);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [userRemoveSearch, availableUsersToRemove]);
+
   const handleInviteCancel = () => {
     setInviteModalOpen(false);
     setSpaceToInvite(null);
@@ -304,6 +330,90 @@ const Spaces = () => {
     setDeleteModalOpen(true);
     setDeleteError(null);
     setActionsMenuOpen(null);
+  };
+
+  const handleRemoveUserClick = (space, event) => {
+    event.stopPropagation();
+    setSpaceToRemoveFrom(space);
+    setRemoveModalOpen(true);
+    setActionsMenuOpen(null);
+    fetchUsersToRemove(space.id);
+  };
+
+  const fetchUsersToRemove = async (spaceId) => {
+    setLoadingUsersToRemove(true);
+    setRemoveError(null);
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/users/${spaceId}/can-be-deleted`, {
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const users = await response.json();
+        setAvailableUsersToRemove(users);
+        setFilteredUsersToRemove(users);
+      } else {
+        const errorMessage = await response.text();
+        setRemoveError(errorMessage || `Error al cargar usuarios: ${response.status}`);
+      }
+    } catch (err) {
+      console.error('Error cargando usuarios:', err);
+      setRemoveError('Error de conexión. No se pudieron cargar los usuarios.');
+    } finally {
+      setLoadingUsersToRemove(false);
+    }
+  };
+
+  const handleRemoveCancel = () => {
+    setRemoveModalOpen(false);
+    setSpaceToRemoveFrom(null);
+    setSelectedUserToRemove(null);
+    setUserRemoveSearch('');
+    setAvailableUsersToRemove([]);
+    setFilteredUsersToRemove([]);
+    setRemoveError(null);
+  };
+
+  const handleRemoveConfirm = async () => {
+    if (!selectedUserToRemove) {
+      setRemoveError('Por favor selecciona un usuario');
+      return;
+    }
+
+    setIsRemoving(true);
+    setRemoveError(null);
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/spaces/user-space-role', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: selectedUserToRemove.id,
+          spaceId: spaceToRemoveFrom.id
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Usuario eliminado del space:', result);
+        handleRemoveCancel();
+        // TODO: Actualizar la lista de spaces o mostrar mensaje de éxito
+      } else {
+        const errorMessage = await response.text();
+        setRemoveError(errorMessage || `Error eliminando usuario: ${response.status}`);
+      }
+    } catch (err) {
+      console.error('Error eliminando usuario:', err);
+      setRemoveError('Error de conexión. No se pudo eliminar el usuario.');
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   if (loading) return <div className="loading-message">Cargando spaces...</div>;
@@ -371,6 +481,17 @@ const Spaces = () => {
                               <path d="M14 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 6Zm0-3a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 3Zm0 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5Z"/>
                             </svg>
                             Añadir usuario
+                          </div>
+                          <div 
+                            className="space-action-item"
+                            onClick={(e) => handleRemoveUserClick(space, e)}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                              <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                              <path d="M9.854 6.146a.5.5 0 0 1 0 .708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708L8 7.293l1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                            </svg>
+                            Eliminar usuario
                           </div>
                         </div>
                       )}
@@ -666,6 +787,96 @@ const Spaces = () => {
                 disabled={isInviting || !selectedUser}
               >
                 {isInviting ? 'Enviando...' : 'Enviar Invitación'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de eliminar usuario */}
+      {removeModalOpen && spaceToRemoveFrom && (
+        <div className="delete-modal-overlay" onClick={handleRemoveCancel}>
+          <div className="delete-modal-content invite-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Eliminar usuario de "{spaceToRemoveFrom.name}"</h3>
+            
+            <div className="invite-form">
+              {/* Buscador de usuarios - solo si hay usuarios disponibles */}
+              {!loadingUsersToRemove && availableUsersToRemove.length > 0 && (
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Buscar usuario por nombre o email..."
+                    value={userRemoveSearch}
+                    onChange={(e) => setUserRemoveSearch(e.target.value)}
+                    className="user-search-input"
+                  />
+                </div>
+              )}
+
+              {/* Usuario seleccionado o Lista de usuarios */}
+              {selectedUserToRemove ? (
+                <div className="selected-user-container">
+                  <div className="selected-user-item">
+                    <div className="user-info">
+                      <div className="user-name">{selectedUserToRemove.firstname} {selectedUserToRemove.lastname}</div>
+                      <div className="user-email">{selectedUserToRemove.email}</div>
+                    </div>
+                    <button
+                      type="button"
+                      className="change-user-btn"
+                      onClick={() => setSelectedUserToRemove(null)}
+                      title="Cambiar usuario"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="users-list-container">
+                  {loadingUsersToRemove ? (
+                    <div className="loading-users">Cargando usuarios...</div>
+                  ) : filteredUsersToRemove.length === 0 ? (
+                    <div className="no-users">
+                      {userRemoveSearch ? 'No se encontraron usuarios con ese criterio' : 'No hay usuarios disponibles para eliminar'}
+                    </div>
+                  ) : (
+                    <div className="users-list">
+                      {filteredUsersToRemove.map(user => (
+                        <div
+                          key={user.id}
+                          className="user-item"
+                          onClick={() => setSelectedUserToRemove(user)}
+                        >
+                          <div className="user-info">
+                            <div className="user-name">{user.firstname} {user.lastname}</div>
+                            <div className="user-email">{user.email}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {removeError && <div className="delete-error-message">{removeError}</div>}
+            
+            <div className="delete-modal-actions">
+              <button 
+                className="delete-cancel-btn" 
+                onClick={handleRemoveCancel}
+                disabled={isRemoving}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="delete-confirm-btn" 
+                onClick={handleRemoveConfirm}
+                disabled={isRemoving || !selectedUserToRemove}
+              >
+                {isRemoving ? 'Eliminando...' : 'Eliminar Usuario'}
               </button>
             </div>
           </div>
