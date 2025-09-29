@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext';
 import { ColorProvider } from './context/ColorContext';
 import { AudioProvider } from './context/AudioContext';
+import { NotificationsProvider } from './context/NotificationsContext';
 import './index.css'
 
 import RootLayout from './layouts/RootLayout.jsx'
@@ -56,7 +57,9 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <ColorProvider>
         <AudioProvider>
-          <RouterProvider router={router} />
+          <NotificationsProvider>
+            <RouterProvider router={router} />
+          </NotificationsProvider>
         </AudioProvider>
       </ColorProvider>
     </AuthProvider>
