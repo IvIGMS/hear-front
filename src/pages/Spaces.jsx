@@ -106,19 +106,43 @@ const Spaces = () => {
     setDeleteError(null);
   };
 
+  const handleUnlinkClick = (space, event) => {
+    event.stopPropagation(); // Evitar navegación al space
+    setSpaceToDelete(space);
+    setDeleteModalOpen(true);
+    setDeleteError(null);
+  };
+
   const handleDeleteConfirm = async () => {
     if (!spaceToDelete) return;
 
     setIsDeleting(true);
     setDeleteError(null);
+    
+    // Determinar si es admin o member
+    const isAdmin = spaces.admin.some(space => space.id === spaceToDelete.id);
+    
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/spaces/${spaceToDelete.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${userToken}`,
-          'accept': '*/*'
-        }
-      });
+      let response;
+      if (isAdmin) {
+        // Admin: eliminar space completo
+        response = await fetch(`http://localhost:8080/api/v1/spaces/${spaceToDelete.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'accept': '*/*'
+          }
+        });
+      } else {
+        // Member: desvincularse del space
+        response = await fetch(`http://localhost:8080/api/v1/spaces/user-space-role/${spaceToDelete.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'accept': '*/*'
+          }
+        });
+      }
 
       if (response.status === 204) {
         // Actualización optimista - quitar de la lista
@@ -133,16 +157,16 @@ const Spaces = () => {
         // Conflict - leer string del servidor
         try {
           const errorMessage = await response.text();
-          setDeleteError(errorMessage || 'No se pudo borrar el space. Error de conflicto.');
+          setDeleteError(errorMessage || 'No se pudo completar la acción. Error de conflicto.');
         } catch {
-          setDeleteError('No se pudo borrar el space. Error de conflicto.');
+          setDeleteError('No se pudo completar la acción. Error de conflicto.');
         }
       } else {
-        setDeleteError(`No se pudo borrar el space. Error: ${response.status}`);
+        setDeleteError(`No se pudo completar la acción. Error: ${response.status}`);
       }
     } catch (e) {
-      console.error('Error borrando space:', e);
-      setDeleteError('Error de conexión. No se pudo borrar el space.');
+      console.error('Error en la acción:', e);
+      setDeleteError('Error de conexión. No se pudo completar la acción.');
     } finally {
       setIsDeleting(false);
     }
@@ -597,16 +621,33 @@ const Spaces = () => {
                   <h3 className="space-name">{space.name}</h3>
                   <div className="space-header-actions">
                     <span className="space-role-badge member">Member</span>
-                    <button 
-                      className="delete-space-btn"
-                      onClick={(e) => handleDeleteClick(space, e)}
-                      title="Borrar space"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                        <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                      </svg>
-                    </button>
+                    <div className="space-actions-container">
+                      <button 
+                        className="space-actions-btn"
+                        onClick={(e) => handleActionsClick(space.id, e)}
+                        title="Acciones del space"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                        </svg>
+                      </button>
+                      
+                      {actionsMenuOpen === space.id && !isMobile && (
+                        <div className="space-actions-menu">
+                          <div 
+                            className="space-action-item"
+                            onClick={(e) => handleDeleteClickFromMenu(space, e)}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                              <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                              <path d="M9.854 6.146a.5.5 0 0 1 0 .708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708L8 7.293l1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                            </svg>
+                            Desvincularse del space
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <p className="space-description">{space.description}</p>
@@ -640,12 +681,25 @@ const Spaces = () => {
       {deleteModalOpen && spaceToDelete && (
         <div className="delete-modal-overlay" onClick={handleDeleteCancel}>
           <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>¿Borrar space?</h3>
-            <p>
-              ¿Estás seguro de que quieres eliminar el space <strong>"{spaceToDelete.name}"</strong>?
-              <br />
-              Esta acción no se puede deshacer y borrará todos los audios del space.
-            </p>
+            {spaces.admin.some(space => space.id === spaceToDelete.id) ? (
+              <>
+                <h3>¿Borrar space?</h3>
+                <p>
+                  ¿Estás seguro de que quieres eliminar el space <strong>"{spaceToDelete.name}"</strong>?
+                  <br />
+                  Esta acción no se puede deshacer y borrará todos los audios del space.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3>¿Desvincularse del space?</h3>
+                <p>
+                  ¿Estás seguro de que quieres desvincularte del space <strong>"{spaceToDelete.name}"</strong>?
+                  <br />
+                  Perderás acceso al space y sus audios, pero podrás volver a unirte si te invitan nuevamente.
+                </p>
+              </>
+            )}
             {deleteError && (
               <div className="delete-error-message">
                 {deleteError}
@@ -664,7 +718,11 @@ const Spaces = () => {
                 onClick={handleDeleteConfirm}
                 disabled={isDeleting}
               >
-                {isDeleting ? 'Borrando...' : 'Borrar Space'}
+                {isDeleting ? (
+                  spaces.admin.some(space => space.id === spaceToDelete.id) ? 'Borrando...' : 'Desvinculando...'
+                ) : (
+                  spaces.admin.some(space => space.id === spaceToDelete.id) ? 'Borrar Space' : 'Desvincularse'
+                )}
               </button>
             </div>
           </div>
@@ -932,39 +990,55 @@ const Spaces = () => {
             <h3>Acciones para "{mobileActionsSpace.name}"</h3>
             
             <div className="mobile-actions-list">
-              <button 
-                className="mobile-action-btn delete-action"
-                onClick={(e) => handleDeleteClickFromMenu(mobileActionsSpace, e)}
-              >
-                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                  <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                </svg>
-                Eliminar space
-              </button>
-              
-              <button 
-                className="mobile-action-btn invite-action"
-                onClick={(e) => handleInviteClick(mobileActionsSpace, e)}
-              >
-                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"/>
-                  <path d="M14 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 6Zm0-3a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 3Zm0 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5Z"/>
-                </svg>
-                Añadir usuario
-              </button>
-              
-              <button 
-                className="mobile-action-btn remove-action"
-                onClick={(e) => handleRemoveUserClick(mobileActionsSpace, e)}
-              >
-                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                  <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                  <path d="M9.854 6.146a.5.5 0 0 1 0 .708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708L8 7.293l1.146-1.147a.5.5 0 0 1 .708 0z"/>
-                </svg>
-                Eliminar usuario
-              </button>
+              {spaces.admin.some(space => space.id === mobileActionsSpace.id) ? (
+                <>
+                  <button 
+                    className="mobile-action-btn delete-action"
+                    onClick={(e) => handleDeleteClickFromMenu(mobileActionsSpace, e)}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                      <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                    </svg>
+                    Eliminar space
+                  </button>
+                  
+                  <button 
+                    className="mobile-action-btn invite-action"
+                    onClick={(e) => handleInviteClick(mobileActionsSpace, e)}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"/>
+                      <path d="M14 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 6Zm0-3a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 14 3Zm0 6a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5Z"/>
+                    </svg>
+                    Añadir usuario
+                  </button>
+                  
+                  <button 
+                    className="mobile-action-btn remove-action"
+                    onClick={(e) => handleRemoveUserClick(mobileActionsSpace, e)}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                      <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                      <path d="M9.854 6.146a.5.5 0 0 1 0 .708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708L8 7.293l1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                    </svg>
+                    Eliminar usuario
+                  </button>
+                </>
+              ) : (
+                <button 
+                  className="mobile-action-btn delete-action"
+                  onClick={(e) => handleDeleteClickFromMenu(mobileActionsSpace, e)}
+                >
+                  <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                    <path d="M9.854 6.146a.5.5 0 0 1 0 .708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708L8 7.293l1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                  </svg>
+                  Desvincularse del space
+                </button>
+              )}
             </div>
             
             <button 

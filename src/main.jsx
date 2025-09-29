@@ -13,6 +13,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Spaces from './pages/Spaces.jsx'
 import SpaceDetail from './pages/SpaceDetail.jsx'
+import Profile from './pages/Profile.jsx'
 import NotFound from './pages/NotFound.jsx'
 
 const router = createBrowserRouter([
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: 'space/:id',
         element: <SpaceDetail />,
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
       },
       {
         path: 'login',

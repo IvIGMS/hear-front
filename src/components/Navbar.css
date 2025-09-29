@@ -189,6 +189,92 @@
   border: 2px solid white;
 }
 
+/* Botón de perfil */
+.profile-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.7rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.profile-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.profile-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+}
+
+/* Dropdown de perfil */
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 200px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.profile-menu-content {
+  padding: 0.5rem 0;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.profile-menu-item:hover {
+  background-color: #f8f9fa;
+}
+
+.profile-menu-item svg {
+  flex-shrink: 0;
+}
+
+.profile-logout {
+  border-top: 1px solid #f0f0f0;
+  color: #dc3545;
+}
+
+.profile-logout:hover {
+  background-color: #fdf2f2;
+}
+
+/* Overlay y sidebar solo visible en mobile */
+.profile-mobile-overlay,
+.profile-sidebar,
+.profile-overlay {
+  display: none;
+}
+
 /* Navegación móvil - oculta por defecto */
 .navbar-mobile {
   display: none;
@@ -211,12 +297,12 @@
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 6px;
-    color: #333;
+    color: white;
     transition: background-color 0.2s ease;
   }
 
   .mobile-menu-btn:hover {
-    background-color: #f5f5f5;
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   /* Home link centrado */
@@ -224,10 +310,11 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    color: #333;
+    color: white;
     text-decoration: none;
     font-weight: 600;
     font-size: 1rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
   /* Contenedor de botones de acción móvil */
@@ -239,66 +326,197 @@
 
   /* Botón de notificaciones móvil */
   .mobile-notifications-btn {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 0.6rem;
-    border-radius: 8px;
+    border-radius: 50%;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+    backdrop-filter: blur(10px);
   }
 
   .mobile-notifications-btn:hover {
-    background: rgba(102, 126, 234, 0.2);
-    border-color: rgba(102, 126, 234, 0.4);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
   }
 
   /* Badge móvil */
   .mobile-notifications-badge {
     position: absolute;
-    top: -2px;
-    right: -2px;
+    top: -4px;
+    right: -4px;
     background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
     color: white;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 0.1rem 0.3rem;
-    border-radius: 8px;
-    min-width: 14px;
-    height: 14px;
+    padding: 0.15rem 0.4rem;
+    border-radius: 10px;
+    min-width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
-    border: 1px solid white;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+    border: 2px solid white;
   }
 
   /* Botón upload - solo icono */
   .mobile-upload-btn {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    color: #fff;
-    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     padding: 0.6rem;
-    border-radius: 8px;
+    border-radius: 25px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+    backdrop-filter: blur(10px);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
   .mobile-upload-btn:hover {
-    background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  /* Botón perfil móvil */
+  .mobile-profile-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.6rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .mobile-profile-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  /* Badge para botón de perfil móvil */
+  .mobile-profile-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 10px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+    border: 2px solid white;
+  }
+
+  /* Profile sidebar móvil (desde la derecha) */
+  .profile-sidebar {
+    position: fixed;
+    top: 64px;
+    right: -280px;
+    width: 280px;
+    height: calc(100vh - 64px);
+    background-color: #fff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 200;
+    overflow-y: auto;
+  }
+
+  .profile-sidebar.open {
+    right: 0;
+  }
+
+  .profile-sidebar-content {
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .profile-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #333;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: color 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    width: 100%;
+    text-align: left;
+    position: relative;
+    justify-content: flex-start;
+  }
+
+  .profile-sidebar-item:hover {
+    color: #667eea;
+  }
+
+  .profile-sidebar-logout {
+    color: #dc3545 !important;
+  }
+
+  .profile-sidebar-logout:hover {
+    color: #c82333 !important;
+  }
+
+  /* Badge para notificaciones en sidebar */
+  .profile-sidebar-badge {
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border-radius: 8px;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
+    margin-left: auto;
+  }
+
+  /* Profile overlay */
+  .profile-overlay {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 64px);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    transition: opacity 0.3s ease;
   }
 
   /* Sidebar móvil */
@@ -337,7 +555,7 @@
   }
 
   .mobile-sidebar-content a:hover {
-    color: #007bff;
+    color: #667eea;
   }
 
   /* Botón upload completo en sidebar */
@@ -420,7 +638,9 @@
 }
 
 @media (max-width: 768px) {
-  .mobile-sidebar {
+  .mobile-sidebar,
+  .profile-sidebar,
+  .profile-overlay {
     display: block;
   }
   
